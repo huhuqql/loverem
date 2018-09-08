@@ -910,6 +910,11 @@ header {
   background: #fff;
 }
 
+.section-top-border {
+  padding: 70px 0;
+  border-top: 1px dotted #eee;
+}
+
 
 footer {
   border-top: 1px solid rgba(255, 255, 255, 0.3);
