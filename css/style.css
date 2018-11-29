@@ -646,11 +646,6 @@ body:after {
   -webkit-transition: all 0.35s ease-in-out; 
   -moz-transition: all 0.35s ease-in-out;
   transition: all 0.35s ease-in-out;
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
 
 .active-banner-slider .owl-controls .owl-dots .owl-dot:nth-child(2):hover {
@@ -665,11 +660,6 @@ body:after {
   -webkit-transition: all 0.35s ease-in-out; 
   -moz-transition: all 0.35s ease-in-out;
   transition: all 0.35s ease-in-out;
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
 
 .active-banner-slider .owl-controls .owl-dots .owl-dot:nth-child(3):hover {
