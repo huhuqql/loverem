@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello World</title>
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m4 l1"></div>
+      <div class="col s12 m4 l10">
+        <div id="message_group"></div>
+      </div>
+      <div class="col s12 m4 l1"></div>
+    </div>
+  </div>
+</body>
+
+<script type="text/babel">
+
+  class Message extends React.Component{
+    constructor(props){
+      super(props);
+    }
+
+    render(){
+      let frontBackgroundColor = "re-item-front z-depth-3 ";
+      let backBackgroundColor = "re-item-back z-depth-3 ";
+      if(this.props.label != undefined){
+        frontBackgroundColor += this.props.label.color;
+        backBackgroundColor += this.props.label.color;
+      }
+      else{
+
+      }
+      return (
+        <div className="col s12 m4 l3">
+          <div className="re-box">
+            <div className="re-item">
+              <div className={frontBackgroundColor}>
+                <div className="re-item-avatar">
+                  <img className="round_avatar z-depth-4" src="img/sample-avatar.jpg"></img>
+                </div>
+              </div>
+              <div className={backBackgroundColor}>
+                <div className="opacity-panel-25">
+                  <i className="material-icons prefix margin-left-min margin-top-min absolute-icon" onClick={this.props.delete}>clear</i>
+                  <dd className="re-item-des padding-1">{this.props.text}</dd>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
+  class MessageList extends React.Component{
+    constructor(props){
+      super(props);
+    }
+
+    render(){
+      return (
+        <div>
+        {
+          this.props.list.map((item) =>
+            <Message key={item.id} text={item.text} label={item.label} delete={() => this.props.delete(item.id)} />
+          )
+        }
+        </div>
+      )
+    }
+  }
+
+  class MessageInputBox extends React.Component{
+    constructor(props){
+      super(props);
+      this.state = {
+        value : "",
+        labelList: [
+          {id: 0, name:"生活", color:"orange darken-3", ifSelected:false},
+          {id: 1, name:"游戏", color:"deep-purple darken-2", ifSelected:false},
+          {id: 2, name:"体育", color:"light-blue accent-4", ifSelected:false},
+          {id: 3, name:"休闲", color:"teal", ifSelected:false}
+        ]
+      };
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleLabelSelection = this.handleLabelSelection.bind(this);
+    }
+
+    handleSubmit(){
+      var label;
+      const newLabelList = this.state.labelList.slice();
+      for(var i = 0; i < newLabelList.length; i++){
+        if(newLabelList[i].ifSelected){
+          label = newLabelList[i];
+          break;
+        }
+      }
+      const newItem = {
+        text: this.state.value,
+        label: label,
+        id: Date.now()
+      };
+      this.setState({
+        value : ""
+      });
+      this.props.submit(newItem);
+    }
+
+    handleLabelSelection(num){
+      const newLabelList = this.state.labelList.slice();
+      for(var i = 0; i < newLabelList.length; i++){
+        if(newLabelList[i].id != num) newLabelList[i].ifSelected = false;
+        else newLabelList[i].ifSelected = !newLabelList[i].ifSelected;
+      }
+      this.setState({
+        labelList : newLabelList
+      });
+    }
+    
+    render(){
+
+      return (
+        <div>
+          <div className="col s12">
+            <div className="row">
+              <div className="input-field col s6">
+                <i className="material-icons prefix">mode_edit</i>
+                <input id="input_title" type="text" onChange={this.handleChange}
+                value={this.state.value}></input>
+                <label htmlFor="input_title">写下你想说的一句话吧！</label>
+              </div>
+            </div>
+            <div className="row">
+            {
+              this.state.labelList.map(
+                (label) => {
+                  let buttonClassName = "btn-floating btn-large waves-effect waves-light hoverable " + label.color;
+                  if(label.ifSelected){
+                    buttonClassName += " increase-size";
+                  }
+                  return(
+                    <div key={label.id} className="col s12 m4 l1">
+                      <a className={buttonClassName} onClick={() => this.handleLabelSelection(label.id)}>{label.name}</a>
+                    </div>
+                  )
+                }
+              )
+            }
+            </div>
+            <div className="row">
+              <div className="input-field col s6">
+                <a className="waves-effect waves-light btn-large grey darken-3" onClick={this.handleSubmit}>
+                  发布
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    handleChange(e) {
+      this.setState({ value: e.target.value });
+    }
+
+  }
+
+  class MessageGroup extends React.Component{
+    constructor(props){
+      super(props);
+      this.state = {
+        list:[]
+      }
+    }
+
+    deleteItemById(id){
+      const newlist = this.state.list.slice();
+      this.setState(
+        {list : newlist.filter(item => id!=item.id)}
+      );
+    }
+
+    render(){
+      return(
+        <div>
+          <div className="row margin-top-2">
+            <h5 className="title">随便说说</h5>
+          </div>
+          <div className="row">
+              <blockquote className="text">
+                一种标签，一句话，记录当前时刻。
+              </blockquote>
+          </div>
+          <div className="row page-grey margin-top-2 z-depth-1">
+            <MessageList list={this.state.list} delete={id => this.deleteItemById(id)}/>
+          </div>
+          <div className="row">
+            <MessageInputBox submit={data => this.submit(data)}/>
+          </div>
+        </div>
+      )
+    }
+
+    submit(data){
+      const newlist = this.state.list.slice();
+      this.setState(
+        {list : newlist.concat(data)}
+      );
+    }
+  }
+
+  var messageList = document.getElementById("message_group");
+  ReactDOM.render(<MessageGroup/>, messageList);
+  
+</script>
+
+</html>
